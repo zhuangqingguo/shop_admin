@@ -39,7 +39,6 @@
 
 <script>
 /* esLint-disabled */
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -72,7 +71,7 @@ export default {
           return
         }
 
-        axios.post('http://localhost:8888/api/private/v1/login', this.loginForm).then(res => {
+        this.$axios.post('login', this.loginForm).then(res => {
           console.log(res)
           if (res.data.meta.status === 200) {
             this.$message({
