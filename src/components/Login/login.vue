@@ -33,7 +33,6 @@
           <el-button @click="resetForm()">重置</el-button>
         </el-form-item>
       </el-form>
-      <h1>我是一只小小鸟</h1>
     </el-col>
   </el-row>
 </template>
@@ -82,6 +81,8 @@ export default {
               center: true,
               duration: 700
             })
+
+            localStorage.setItem('token', res.data.data.token)
 
             this.$router.push('/home')
           } else {
