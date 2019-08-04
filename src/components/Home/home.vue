@@ -27,26 +27,25 @@
       <el-aside width="200px">
         <el-menu
           :router="true"
-          :default-active="$route.path"
+          :default-active="handleUrlPath()"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
         >
-          <el-submenu index="1">
+          <el-submenu
+            v-for="item1 in menusData"
+            :key="item1.id"
+            :index="item1.id+''"
+          >
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item1.authName}}</span>
             </template>
-            <el-menu-item index="/users">用户列表</el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="/roles">角色列表</el-menu-item>
-            <el-menu-item index="/rights">权限列表</el-menu-item>
+            <el-menu-item
+              :index="'/'+item2.path"
+              v-for="item2 in item1.children"
+              :key="item2.id"
+            >{{item2.authName}}</el-menu-item>
           </el-submenu>
 
         </el-menu>
@@ -60,13 +59,29 @@
 
 <script>
 export default {
+  data () {
+    return {
+      menusData: []
+    }
+  },
+  created () {
+    this.loadLeftMenu()
+  },
   methods: {
-    logOut () {
-      this.$confirm('此操作将退出该账户, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+    // 动态加载左侧菜单
+    async loadLeftMenu () {
+      let res = await this.$axios.get(`menus`)
+      // console.log(res)
+      this.menusData = res.data.data
+    },
+    async logOut () {
+      try {
+        await this.$confirm('此操作将退出该账户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+
         this.$message({
           type: 'success',
           message: '退出成功',
@@ -77,14 +92,38 @@ export default {
         localStorage.removeItem('token')
 
         this.$router.push('/login')
-      }).catch(() => {
+      } catch (err) {
         this.$message({
           type: 'info',
           message: '已取消退出',
           center: true,
           duration: 800
         })
-      })
+      }
+
+      // .then(() => {
+      //   this.$message({
+      //     type: 'success',
+      //     message: '退出成功',
+      //     center: true,
+      //     duration: 700
+      //   })
+
+      // localStorage.removeItem('token')
+
+      // this.$router.push('/login')
+      // }).catch(() => {
+      //   this.$message({
+      //     type: 'info',
+      //     message: '已取消退出',
+      //     center: true,
+      //     duration: 800
+      //   })
+      // })
+    },
+    handleUrlPath () {
+      if (this.$route.path === '/good-add') return '/goods'
+      return this.$route.path
     }
   }
 }

@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     startLogin () {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (!valid) {
           this.$message({
             message: '校验失败',
@@ -71,28 +71,50 @@ export default {
           return
         }
 
-        this.$axios.post('login', this.loginForm).then(res => {
-          console.log(res)
-          if (res.data.meta.status === 200) {
-            this.$message({
-              message: '登录成功',
-              type: 'success',
-              center: true,
-              duration: 700
-            })
+        let res = await this.$axios.post('login', this.loginForm)
+        console.log(res)
+        if (res.data.meta.status === 200) {
+          this.$message({
+            message: '登录成功',
+            type: 'success',
+            center: true,
+            duration: 700
+          })
 
-            localStorage.setItem('token', res.data.data.token)
+          localStorage.setItem('token', res.data.data.token)
 
-            this.$router.push('/home')
-          } else {
-            this.$message({
-              message: '登录失败',
-              type: 'danger',
-              center: true,
-              duration: 700
-            })
-          }
-        })
+          this.$router.push('/home')
+        } else {
+          this.$message({
+            message: '登录失败',
+            type: 'danger',
+            center: true,
+            duration: 700
+          })
+        }
+
+        // .then(res => {
+        //   console.log(res)
+        //   if (res.data.meta.status === 200) {
+        //     this.$message({
+        //       message: '登录成功',
+        //       type: 'success',
+        //       center: true,
+        //       duration: 700
+        //     })
+
+        //     localStorage.setItem('token', res.data.data.token)
+
+        //     this.$router.push('/home')
+        //   } else {
+        //     this.$message({
+        //       message: '登录失败',
+        //       type: 'danger',
+        //       center: true,
+        //       duration: 700
+        //     })
+        //   }
+        // })
       })
     },
     resetForm () {
